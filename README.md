@@ -9,7 +9,7 @@ This project is a web-based interface for building crochet patterns visually, us
 - [x] Install dependencies and verify the dev server runs.
 
 ### 2. Basic UI Layout
-- [ ] Create a menu with stitch options:
+- [x] Create a menu with stitch options:
     - Chain
     - Magic Ring
     - Single Crochet

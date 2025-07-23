@@ -1,4 +1,5 @@
 <script>
+  import PatternCanvas from './lib/PatternCanvas.svelte';
   const stitches = [
     { name: 'Chain', key: 'chain' },
     { name: 'Magic Ring', key: 'magic_ring' },
@@ -8,6 +9,25 @@
     { name: 'Treble Crochet', key: 'treble_crochet' }
   ];
   let selectedStitch = stitches[0].key;
+  let mode = 'grid'; // 'grid' or 'round'
+  let patternStitches = [];
+  let stitchIdCounter = 0;
+
+  function handleAddStitch(stitch) {
+    patternStitches = [
+      ...patternStitches,
+      { ...stitch, id: stitchIdCounter++ }
+    ];
+  }
+
+  function handleReset() {
+    patternStitches = [];
+    stitchIdCounter = 0;
+  }
+
+  function handleUndo() {
+    patternStitches = patternStitches.slice(0, -1);
+  }
 </script>
 
 <div class="container">
@@ -25,12 +45,23 @@
         </li>
       {/each}
     </ul>
+    <div style="margin-top:2rem;">
+      <label><input type="radio" bind:group={mode} value="grid"> Rows (Grid)</label><br>
+      <label><input type="radio" bind:group={mode} value="round"> Rounds (Circle)</label>
+    </div>
   </aside>
   <main class="pattern-area">
     <h1>Crochet Pattern Builder</h1>
-    <div class="pattern-placeholder">
-      <p>Select a stitch and start building your pattern!</p>
+    <div class="canvas-controls">
+      <button on:click={handleUndo} disabled={patternStitches.length === 0}>Undo</button>
+      <button on:click={handleReset} disabled={patternStitches.length === 0}>Reset</button>
     </div>
+    <PatternCanvas
+      {mode}
+      stitches={patternStitches}
+      selectedStitchType={selectedStitch}
+      onAddStitch={handleAddStitch}
+    />
   </main>
 </div>
 
@@ -84,12 +115,25 @@
     font-size: 2rem;
     margin-bottom: 2rem;
   }
-  .pattern-placeholder {
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    padding: 3rem 5rem;
-    color: #aaa;
-    font-size: 1.1rem;
-    text-align: center;
+  .canvas-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .canvas-controls button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .canvas-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .canvas-controls button:not(:disabled):hover {
+    background: #ffe0c7;
   }
 </style>
